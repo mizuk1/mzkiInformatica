@@ -1,6 +1,7 @@
 # mzkiInformatica
 
 Site institucional da MZKI com catálogo de cursos, trilhas, agenda, clientes e recomendação de cursos com IA.
+
 [Site da MZKI Treinamento](https://mzki.com.br)
 
 ## Stack
