@@ -13,7 +13,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Configurações
-REPO_URL="https://github.com/mizuk1/mzki-informatica.git"
+REPO_URL="https://github.com/mizuk1/mzkiInformatica.git"
 INSTALL_DIR="$HOME/mzki-informatica"
 MAX_RETRIES=3
 RETRY_DELAY=5
