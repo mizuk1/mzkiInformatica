@@ -29,7 +29,7 @@ services:
     volumes:
       - postgres_volume:/var/lib/postgresql/data
     environment:
-      - POSTGRES_HOST_AUTH_METHOD=md5
+      - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
       - "5432:5432"
     networks:

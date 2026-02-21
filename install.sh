@@ -329,8 +329,6 @@ if [ ! -f ".env" ]; then
     
     read -p "🗄️  Database URL (deixar vazio para SQLite): " DATABASE_URL
     
-    DB_PASSWORD=$(python3 -c 'import secrets; print(secrets.token_urlsafe(16))')
-    
     cat > .env << EOF
 # Django
 DEBUG=False
@@ -351,7 +349,6 @@ LANGCHAIN_PROJECT=mzki-informatica
 # PostgreSQL (se usar banco em container)
 DB_NAME=mzki_informatica
 DB_USER=postgres
-DB_PASSWORD=$DB_PASSWORD
 EOF
     
     chmod 600 .env
