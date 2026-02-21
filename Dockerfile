@@ -44,10 +44,12 @@ RUN pip install \
     langchain-community>=0.0.10 \
     langgraph>=0.0.1
 
+# Instalar torch CPU-only (evita wheel CUDA gigante)
+RUN pip install --index-url https://download.pytorch.org/whl/cpu torch==2.5.1+cpu
+
 # Depois instalar dependências pesadas (SBERT)
 RUN pip install \
     sentence-transformers>=2.2.0 \
-    torch>=2.0.0 \
     transformers>=4.30.0 \
     numpy>=1.24.0 \
     tiktoken>=0.5.0 \
