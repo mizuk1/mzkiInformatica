@@ -1,0 +1,115 @@
+/* Cursos page styles */
+
+/* Breadcrumb */
+.breadcrumb-section {
+    background-color: #f8f9fa;
+    padding: 12px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.breadcrumb-item a {
+    color: #666;
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: #333;
+}
+
+/* App Showcase Section */
+#appShowcase {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 3rem 0;
+}
+
+.app-card {
+    background-color: var(--app-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    padding: 0;
+    width: 100%;
+}
+
+.app-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.app-card small {
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Filtros Section */
+.filters-section {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 0;
+}
+
+.search-input,
+.filter-select {
+    border-radius: 4px;
+}
+
+.search-button {
+    border-radius: 0 4px 4px 0;
+}
+
+/* Courses count section */
+.courses-count-section {
+    background-color: #f0f0f0;
+    padding: 0.75rem 0;
+}
+
+/* Courses grid */
+.courses-grid {
+    padding: 1rem 0;
+}
+
+.course-card {
+    height: 100%;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.course-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.course-card-header {
+    height: 5px;
+    width: 100%;
+}
+
+/* Pagination */
+.pagination-nav {
+    margin-top: 40px;
+}
+
+.page-link {
+    color: #1A5E34;
+    border-color: #dee2e6;
+}
+
+.page-link:hover {
+    color: white;
+    background-color: #1A5E34;
+    border-color: #1A5E34;
+}
+
+.page-item.active .page-link {
+    background-color: #1A5E34;
+    border-color: #1A5E34;
+}
+
+/* Empty state */
+.empty-state {
+    padding: 3rem 0;
+    text-align: center;
+}

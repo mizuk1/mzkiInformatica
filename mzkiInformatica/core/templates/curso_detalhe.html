@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+{% load active %}
+
+{% block title %}{{ curso.titulo }}{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" style="background-color: #f8f9fa; padding: 12px 0; border-bottom: 1px solid #e9ecef;">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}" style="color: #666; text-decoration: none;">🏠 Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'cursos' %}" style="color: #666; text-decoration: none;">📚 Cursos</a></li>
+      <li class="breadcrumb-item" style="color: {{ curso.cor }}; font-weight: 500;">{{ curso.app }}</li>
+      <li class="breadcrumb-item active" aria-current="page" style="color: #333;">{{ curso.titulo }}</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<div style="background-color: {{ curso.cor }}; padding: 50px 0; color: white;">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 mx-auto">
+        <h1 class="display-4 fw-bold mb-2">{{ curso.titulo }}</h1>
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+          <p class="fs-5 mb-0" style="opacity: 0.9;">{{ curso.app }} • Versão {{ curso.versao }}</p>
+          <span class="badge" style="background-color: rgba(255, 255, 255, 0.3); font-size: 12px; padding: 4px 10px;">
+            {{ curso.get_nivel_display }}
+          </span>
+        </div>
+        <div class="mt-4">
+          <a
+            href="https://wa.me/5541992471843?text={{ 'Olá! Tenho interesse no curso'|urlencode }}%20{{ curso.titulo|urlencode }}%20{{ 'da MZKI Treinamento.'|urlencode }}"
+            target="_blank"
+            rel="noopener"
+            class="btn btn-lg cta-whatsapp"
+          >
+            <i class="fab fa-whatsapp me-2"></i> Quero informações no WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Info Cards -->
+<div class="container py-3">
+  <div class="row g-4 justify-content-center">
+    <div class="col-sm-6 col-md-5">
+      <div class="card border-0 h-100" style="background-color: white; border-left: 5px solid {{ curso.cor }}; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);">
+        <div class="card-body">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 32px;">🎯</div>
+            <div>
+              <small class="text-muted d-block" style="font-size: 11px;">Modalidades</small>
+              <p class="mb-0 fw-bold" style="font-size: 16px;">
+                {% for modalidade in curso.modalidades.all %}
+                  {% if not forloop.first %}<br>{% endif %}
+                  {{ modalidade.nome }}
+                {% endfor %}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-md-5">
+      <div class="card border-0 h-100" style="background-color: white; border-left: 5px solid {{ curso.cor }}; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);">
+        <div class="card-body">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="font-size: 32px;">⏱️</div>
+            <div>
+              <small class="text-muted d-block" style="font-size: 11px;">Carga Horária</small>
+              <p class="mb-0 fw-bold" style="font-size: 16px;">{{ curso.carga_horaria }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Conteúdo Principal -->
+<div class="container py-4">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <!-- Descrição Curta -->
+      {% if curso.descricao_curta %}
+      <section class="mb-5">
+        <h2 class="h5 fw-bold mb-3" style="color: {{ curso.cor }};">📝 Resumo</h2>
+        <p class="fs-5 text-muted lh-lg">{{ curso.descricao_curta }}</p>
+      </section>
+
+      <!-- Divider -->
+      <hr class="my-1" style="border-color: #e0e0e0;">
+      {% endif %}
+
+      <!-- Objetivos -->
+      {% if curso.objetivos %}
+      <section class="mb-5">
+        <h2 class="h5 fw-bold mb-3" style="color: {{ curso.cor }};">🎯 Objetivos</h2>
+        <div class="lh-lg" style="line-height: 1.8; color: #555;">
+          {{ curso.objetivos|linebreaks }}
+        </div>
+      </section>
+
+      <!-- Divider -->
+      <hr class="my-1" style="border-color: #e0e0e0;">
+      {% endif %}
+
+      <!-- Público-Alvo -->
+      {% if curso.publico_alvo %}
+      <section class="mb-5">
+        <h2 class="h5 fw-bold mb-3" style="color: {{ curso.cor }};">👥 Para Quem É Este Curso</h2>
+        <div class="lh-lg" style="line-height: 1.8; color: #555;">
+          {{ curso.publico_alvo|linebreaks }}
+        </div>
+      </section>
+
+      <!-- Divider -->
+      <hr class="my-1" style="border-color: #e0e0e0;">
+      {% endif %}
+
+      <!-- Pré-requisitos -->
+      {% if curso.prerequisitos %}
+      <section class="mb-4">
+        <h2 class="h5 fw-bold mb-3" style="color: {{ curso.cor }};">📋 Pré-requisitos</h2>
+        <div class="lh-lg" style="line-height: 1.8; color: #555;">
+          {{ curso.prerequisitos|linebreaks }}
+        </div>
+      </section>
+      {% endif %}
+      <div class="text-center mt-4">
+        <a
+          href="https://wa.me/5541992471843?text={{ 'Olá! Tenho interesse no curso'|urlencode }}%20{{ curso.titulo|urlencode }}%20{{ 'da MZKI Treinamento.'|urlencode }}"
+          target="_blank"
+          rel="noopener"
+          class="btn btn-lg cta-whatsapp"
+        >
+          <i class="fab fa-whatsapp me-2"></i> Quero informações no WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Conteúdo Programático (largura expandida) -->
+{% if curso.modulos.exists %}
+<div class="container-fluid px-lg-5 py-5" style="background: linear-gradient(135deg, #f5f5f5 0%, #efefef 100%); border-top: 5px solid {{ curso.cor }}; margin-top: 0;">
+  <div class="container">
+    <section class="mb-5">
+      <h2 class="h4 fw-bold mb-4 text-center" style="color: {{ curso.cor }};">📖 Conteúdo Programático</h2>
+      
+      <!-- Versão Cards (MD e maiores) -->
+      <div class="row g-4 d-none d-md-flex">
+        {% for modulo in curso.modulos.all %}
+        <div class="col-12 col-lg-6">
+          <div class="card border-0 h-100" style="background-color: white; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); border-left: 5px solid {{ curso.cor }};">
+            <div class="card-body p-4">
+              <h5 class="fw-bold mb-3" style="color: {{ curso.cor }};">{{ modulo.titulo }}</h5>
+              {% if modulo.descricao %}
+              <div class="text-muted small mb-3" style="font-weight: 400; color: #666; line-height: 1.4;">{{ modulo.descricao }}</div>
+              {% endif %}
+              {{ modulo.conteudo|to_ordered_list }}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Versão Accordion (SM e menores) -->
+      <div class="accordion d-md-none" id="modulosAccordion">
+        {% for modulo in curso.modulos.all %}
+        <div class="accordion-item border-0 mb-3" style="box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); border-left: 5px solid {{ curso.cor }};">
+          <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+            <button class="accordion-button collapsed fw-bold" type="button" 
+                    data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" 
+                    aria-expanded="false" 
+                    aria-controls="collapse{{ forloop.counter }}"
+                    style="color: {{ curso.cor }}; background-color: white; padding: 1rem;">
+              <div>
+                <div>{{ modulo.titulo }}</div>
+                {% if modulo.descricao %}
+                <div class="text-muted small mt-1" style="font-weight: 400; color: #666; line-height: 1.4;">{{ modulo.descricao }}</div>
+                {% endif %}
+              </div>
+            </button>
+          </h2>
+          <div id="collapse{{ forloop.counter }}" 
+               class="accordion-collapse collapse" 
+               aria-labelledby="heading{{ forloop.counter }}" 
+               data-bs-parent="#modulosAccordion">
+            <div class="accordion-body">
+              {{ modulo.conteudo|to_ordered_list }}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="text-center mt-4">
+        <a
+          href="https://wa.me/5541992471843?text={{ 'Olá! Tenho interesse no curso'|urlencode }}%20{{ curso.titulo|urlencode }}%20{{ 'da MZKI Treinamento.'|urlencode }}"
+          target="_blank"
+          rel="noopener"
+          class="btn btn-lg cta-whatsapp"
+        >
+          <i class="fab fa-whatsapp me-2"></i> Quero informações no WhatsApp
+        </a>
+      </div>
+    </section>
+  </div>
+</div>
+{% elif curso.conteudo_programatico %}
+<div class="container-fluid px-lg-5 py-5" style="background: linear-gradient(135deg, #f5f5f5 0%, #efefef 100%); border-top: 5px solid {{ curso.cor }}; margin-top: 0;">
+  <div class="container">
+    <section class="mb-5">
+      <h2 class="h4 fw-bold mb-4 text-center" style="color: {{ curso.cor }};">📖 Conteúdo Programático</h2>
+      <div class="lh-lg" style="line-height: 1.8; color: #555;">
+        {{ curso.conteudo_programatico|linebreaks }}
+      </div>
+    </section>
+  </div>
+</div>
+{% endif %}
+
+<!-- Cursos Relacionados -->
+{% if cursos_relacionados %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12">
+      <h3 class="h4 fw-bold mb-4" style="color: {{ curso.cor }};">📚 Outros Cursos de {{ curso.app }}</h3>
+    </div>
+  </div>
+  <div class="row g-4">
+    {% for curso_rel in cursos_relacionados %}
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card h-100 border-0 shadow-sm overflow-hidden">
+        <!-- Barra colorida -->
+        <div style="height: 5px; background-color: {{ curso_rel.cor }};"></div>
+        <div class="card-body p-4 d-flex flex-column">
+          <span class="badge text-white mb-3 align-self-start" style="background-color: {{ curso_rel.cor }};">{{ curso_rel.app }}</span>
+          <h5 class="card-title fw-bold mb-2">{{ curso_rel.titulo }}</h5>
+          <p class="text-muted small mb-3">{{ curso_rel.nivel }} • {{ curso_rel.versao }} • {{ curso_rel.carga_horaria }}</p>
+          <p class="card-text text-muted small flex-grow-1 lh-sm">{{ curso_rel.descricao_curta|truncatewords:20 }}</p>
+          <a href="{% url 'curso_detalhe' curso_rel.id %}" class="btn btn-sm mt-3 w-100" style="background-color: {{ curso_rel.cor }}; color: white; border: none;">
+            Ver detalhes
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  
+  <!-- Link para ver todos -->
+  <div class="row mt-4">
+    <div class="col-12 text-center">
+      <a href="{% url 'cursos' %}" class="btn btn-outline-secondary" style="border-color: {{ curso.cor }}; color: {{ curso.cor }};">
+        Ver todos os cursos de {{ curso.app }} →
+      </a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<style>
+  .card {
+    transition: all 0.3s ease;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12) !important;
+  }
+  .cta-whatsapp {
+    background: linear-gradient(135deg, #25d366 0%, #1ebd5a 100%);
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
+    padding: 12px 22px;
+  }
+  .cta-whatsapp:hover {
+    color: #ffffff;
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+  }
+  .cta-whatsapp:focus-visible {
+    color: #ffffff;
+    outline: 3px solid rgba(255, 255, 255, 0.7);
+    outline-offset: 2px;
+  }
+</style>
+{% endblock %}

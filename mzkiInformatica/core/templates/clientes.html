@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nossos Clientes{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" style="background-color: #f8f9fa; padding: 12px 0; border-bottom: 1px solid #e9ecef;">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}" style="color: #666; text-decoration: none;">🏠 Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page" style="color: #333;">🏢 Clientes</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="d-flex align-items-center justify-content-center text-white" style="background: linear-gradient(135deg, #1A5E34 0%, #0F4A26 100%); min-height: 180px; padding: 40px 0;">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-3"><i class="bi bi-building"></i> Nossos Clientes</h1>
+        <p class="fs-5 mb-0">{{ total_clientes }} empresas confiam em nossas soluções de treinamento</p>
+    </div>
+</section>
+
+<!-- Abas por Categoria -->
+<div class="container py-5">
+  {% if categorias %}
+    <!-- Abas de Navegação -->
+    <ul class="nav nav-tabs mb-4" id="clientesTabs" role="tablist">
+      {% for cat_key, cat_nome, cat_clientes in categorias %}
+      <li class="nav-item" role="presentation">
+        <button class="nav-link {% if forloop.first %}active{% endif %}" 
+                id="tab-{{ cat_key }}" 
+                data-bs-toggle="tab" 
+                data-bs-target="#content-{{ cat_key }}" 
+                type="button" 
+                role="tab" 
+                aria-controls="content-{{ cat_key }}" 
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+          {{ cat_nome }}
+        </button>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <!-- Conteúdo das Abas -->
+    <div class="tab-content" id="clientesContent">
+      {% for cat_key, cat_nome, cat_clientes in categorias %}
+      <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" 
+           id="content-{{ cat_key }}" 
+           role="tabpanel" 
+           aria-labelledby="tab-{{ cat_key }}">
+        
+        <!-- Grid de Logos -->
+        <div class="row g-4">
+          {% for cliente in cat_clientes %}
+          <div class="col-6 col-sm-6 col-md-4 col-lg-3">
+            <a href="{% url 'cliente_detalhe' cliente.slug %}" class="text-decoration-none">
+              <div class="card h-100 shadow-sm client-card" 
+                   style="transition: all 0.3s ease; cursor: pointer; background-color: white; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                <div class="card-body d-flex align-items-center justify-content-center" 
+                     style="height: 200px; padding: 20px; background-color: white;">
+                  {% if cliente.logo %}
+                    <img src="{{ cliente.logo.url }}" 
+                         alt="{{ cliente.nome }}" 
+                         class="img-fluid"
+                         loading="lazy"
+                         style="max-height: 150px; max-width: 100%; object-fit: contain;">
+                  {% else %}
+                    <div class="text-center">
+                      <div style="font-size: 48px; margin-bottom: 10px;">🏢</div>
+                      <p class="text-muted small">{{ cliente.nome }}</p>
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="card-footer border-top bg-light text-center py-2">
+                  <p class="small mb-0 text-muted">{{ cliente.nome }}</p>
+                </div>
+              </div>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+  <div class="alert alert-info" role="alert">
+    <strong>Nenhum cliente cadastrado ainda.</strong>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .client-card {
+    border-radius: 8px;
+  }
+  
+  .client-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+    border-color: #1A5E34 !important;
+  }
+  
+  .nav-tabs .nav-link {
+    color: #666;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-tabs .nav-link:hover {
+    color: #1A5E34;
+    border-bottom-color: #1A5E34;
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: #1A5E34;
+    border-bottom-color: #1A5E34;
+    background-color: transparent;
+  }
+</style>
+
+{% endblock %}

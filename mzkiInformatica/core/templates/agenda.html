@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Agenda de Cursos{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'assets/css/agenda.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="breadcrumb-nav">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">🏠 Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page">📅 Agenda</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Banner -->
+<section class="d-flex align-items-center justify-content-center text-white" style="background: linear-gradient(135deg, #1A5E34 0%, #0F4A26 100%); min-height: 180px; padding: 40px 0;">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-3"><i class="bi bi-calendar2-event"></i> Agenda de Cursos</h1>
+        <p class="fs-5 mb-0">Confira os cursos agendados para os próximos meses e escolha a melhor turma para você</p>
+    </div>
+</section>
+
+<!-- Seção de Eventos do Mês -->
+<section class="py-5 section-light-bg" style="min-height: 500px;">
+    <div class="container">
+        <div class="mb-4">
+            <h2 class="fw-bold text-center mb-3 d-none d-md-block" style="color: #000; font-size: 1.5rem;">
+                Cursos Agendados para <span id="mes-nome-cards">{{ mes_nome }}</span>
+            </h2>
+            
+            <!-- Botões para telas md e maiores -->
+            <div class="month-buttons d-none d-md-flex align-items-center justify-content-center gap-2">
+                <button id="btn-eventos-anterior" class="btn btn-sm btn-outline-primary" data-mes="{{ mes_anterior.mes }}" data-ano="{{ mes_anterior.ano }}">
+                    <i class="fas fa-chevron-left"></i> <span class="d-none d-md-inline">Anterior</span>
+                </button>
+                
+                <button id="btn-eventos-proximo" class="btn btn-sm btn-outline-primary" data-mes="{{ mes_proximo.mes }}" data-ano="{{ mes_proximo.ano }}">
+                    <span class="d-none d-md-inline">Próximo</span> <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <!-- Carousel de meses para telas pequenas -->
+            <div class="month-carousel d-md-none">
+                <div class="month-card prev" id="carousel-prev" data-mes="{{ mes_anterior.mes }}" data-ano="{{ mes_anterior.ano }}" title="Mês anterior">
+                    <div style="font-size: 0.75rem; margin-bottom: 0.2rem;">
+                        <i class="fas fa-chevron-left" style="opacity: 0.7;"></i>
+                    </div>
+                    <div style="font-size: 0.8rem; font-weight: 500;">{{ mes_anterior_nome }}</div>
+                </div>
+                <div class="month-card current" id="carousel-current" title="Mês atual">
+                    <div style="font-size: 1.4rem; font-weight: bold;">{{ ano }}</div>
+                    <div style="font-size: 0.95rem; letter-spacing: 0.5px;">{{ mes_nome }}</div>
+                </div>
+                <div class="month-card next" id="carousel-next" data-mes="{{ mes_proximo.mes }}" data-ano="{{ mes_proximo.ano }}" title="Próximo mês">
+                    <div style="font-size: 0.75rem; margin-bottom: 0.2rem;">
+                        <i class="fas fa-chevron-right" style="opacity: 0.7;"></i>
+                    </div>
+                    <div style="font-size: 0.8rem; font-weight: 500;">{{ mes_proximo_nome }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="eventos-mes-container" style="position: relative; min-height: 450px; display: flex; flex-direction: column;">
+            <div class="loading-spinner" id="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+{% if eventos_mês_agrupados %}
+
+        {% for grupo in eventos_mês_agrupados %}
+        <div class="mb-5 p-3 rounded" style="{% if grupo.eh_sabados %}background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%); border: 2px solid #adb5bd;{% else %}background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border: 2px solid #ced4da;{% endif %} box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);">
+            <div class="d-flex align-items-center justify-content-between flex-wrap mb-3 pb-3" style="border-bottom: 2px dashed {% if grupo.eh_sabados %}#adb5bd{% else %}#ced4da{% endif %};">
+                <div>
+                    <h4 class="fw-bold mb-1" style="{% if grupo.eh_sabados %}color: #495057;{% else %}color: #343a40;{% endif %}">
+                        {% if grupo.eh_sabados %}
+                            🗓️ Cursos aos Sábados - {{ mes_nome }}
+                        {% else %}
+                            📅 {{ grupo.data_minima|date:"d" }} a {{ grupo.data_maxima|date:"d" }} de {{ mes_nome }}
+                        {% endif %}
+                    </h4>
+                    <small class="text-muted" style="font-size: 0.85rem;">
+                        {% if grupo.eh_sabados %}
+                            Primeiro sábado: {{ grupo.data|date:"d/m/Y" }}
+                        {% else %}
+                            Início dos cursos: {{ grupo.data|date:"d/m/Y" }}
+                        {% endif %}
+                    </small>
+                </div>
+                <div class="text-end">
+                    <div class="text-muted mb-1" style="font-size: 0.85rem; font-weight: 600;">
+                        Turnos disponíveis:
+                    </div>
+                    <div style="font-size: 0.85rem;">
+                        {% if grupo.turnos_detalhados %}
+                            {% for turno in grupo.turnos_detalhados %}
+                                <div class="d-inline-block me-2 mb-1 px-2 py-1 rounded" style="background-color: white; border: 1px solid #dee2e6; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                                    <span style="font-size: 1rem;">{{ turno.emoji }}</span>
+                                    <strong>{{ turno.nome }}</strong>
+                                    <span class="text-muted" style="font-size: 0.8rem;">({{ turno.horario }})</span>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted">--</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-1">
+                {% for evento in grupo.eventos %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-sm h-100 overflow-hidden">
+                        <div style="height: 6px; background-color: {{ evento.curso.cor }};"></div>
+
+                        <div class="card-body d-flex flex-column h-100" style="padding: 1rem 1rem 0.75rem;">
+                            <div class="mb-2 d-flex align-items-start justify-content-between">
+                                <div>
+                                    <span class="badge" style="background-color: {{ evento.curso.cor }}; color: white;">
+                                        {{ evento.curso.app }}
+                                    </span>
+                                    <h5 class="card-title fw-bold mt-2">{{ evento.curso.titulo }}</h5>
+                                </div>
+                                <div style="font-size: 1.8rem;">
+                                    {% if evento.turno == 'matutino' %}
+                                        ☀️
+                                    {% elif evento.turno == 'integral' %}
+                                        🕘
+                                    {% elif evento.turno == 'vespertino' %}
+                                        🌤️
+                                    {% else %}
+                                        🌙
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <ul class="list-unstyled mb-2" style="font-size: 0.9rem;">
+                                <li class="mb-2">
+                                    <i class="fas fa-calendar" style="color: {{ evento.curso.cor }};"></i>
+                                    <strong>Período:</strong><br>
+                                    <span style="font-size: 0.85rem;">
+                                        {% if evento.tipo == 'sabados' %}
+                                            4 Sábados: {{ evento.data_inicio|date:"d/m" }} até {{ evento.data_fim|date:"d/m/Y" }}
+                                        {% else %}
+                                            {{ evento.data_inicio|date:"d/m/Y" }} até {{ evento.data_fim|date:"d/m/Y" }}
+                                        {% endif %}
+                                    </span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-clock" style="color: {{ evento.curso.cor }};"></i>
+                                    <strong>Turno:</strong><br>
+                                    <span style="font-size: 0.85rem;">
+                                        {{ evento.get_turno_display }}
+                                        {% if evento.turno == 'matutino' %}
+                                        {% elif evento.turno == 'integral' %}
+                                        {% elif evento.turno == 'vespertino' %}
+                                        {% elif evento.turno == 'noturno' %}
+                                        {% endif %}
+                                    </span>
+                                </li>
+                            </ul>
+
+                            <div class="mb-2">
+                                {% if evento.esta_aberto %}
+                                <span class="text-success fw-semibold" style="font-size: 0.9rem; letter-spacing: 0.01em;">✔ Aberto para inscrição</span>
+                                {% elif evento.status == 'em_andamento' %}
+                                <span class="badge bg-info">Em Andamento</span>
+                                {% elif evento.status == 'fechado' %}
+                                <span class="badge bg-warning">Fechado</span>
+                                {% elif evento.status == 'cancelado' %}
+                                <span class="badge bg-danger">Cancelado</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="card-footer bg-white border-0 px-0 pt-0 mt-auto" style="padding-bottom: 0.75rem;">
+                                <div class="d-flex flex-column gap-2">
+                                    <a href="{% url 'curso_detalhe' evento.curso.id %}" class="btn btn-sm w-100" style="background-color: {{ evento.curso.cor }}; color: white; border: none;">
+                                        Ver Detalhes do Curso
+                                    </a>
+                                    <a class="btn btn-sm w-100 btn-outline-success" target="_blank"
+                                       href="https://wa.me/5541992471843?text={{ 'Olá! Tenho interesse no curso'|urlencode }}%20{{ evento.curso.titulo|urlencode }}%20{{ 'agendado de'|urlencode }}%20{{ evento.data_inicio|date:"d/m/Y"|urlencode }}%20{{ 'a'|urlencode }}%20{{ evento.data_fim|date:"d/m/Y"|urlencode }}%20{{ '('|urlencode }}{{ evento.get_turno_display|urlencode }}{{ ') '|urlencode }}{{ 'pela MZKI Treinamento.'|urlencode }}">
+                                        Chamar no WhatsApp
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+{% else %}
+        <div class="text-center">
+            <p class="text-muted fs-5">😔 Nenhum curso agendado para este mês.</p>
+            <a href="{% url 'cursos' %}" class="btn btn-primary">
+                Ver Cursos Disponíveis
+            </a>
+        </div>
+{% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Agenda page scripts -->
+<script src="{% static 'assets/js/agenda.js' %}" defer></script>
+
+{% endblock %}

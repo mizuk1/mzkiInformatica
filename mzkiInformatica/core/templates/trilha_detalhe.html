@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ trilha.titulo }}{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" style="background-color: #f8f9fa; padding: 12px 0; border-bottom: 1px solid #e9ecef;">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}" style="color: #666; text-decoration: none;">🏠 Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'trilhas' %}" style="color: #666; text-decoration: none;">🎯 Trilhas</a></li>
+      <li class="breadcrumb-item active" aria-current="page" style="color: #333;">{{ trilha.titulo }}</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="py-5" style="background: linear-gradient(135deg, {{ trilha.cor }} 0%, {{ trilha.cor }}CC 100%);">
+    <div class="container text-white">
+        <div class="row align-items-center">
+            <div class="col-12 col-md-8">
+                <div class="d-flex align-items-center mb-3">
+                    {% if cursos_trilha.first %}
+                    <div class="d-flex align-items-center justify-content-center me-3" style="width: 80px; height: 80px; background-color: rgba(255,255,255,0.2); border-radius: 12px; padding: 10px;">
+                        <img src="{% static 'images/apps/' %}{{ cursos_trilha.first.curso.app|lower }}.png" alt="{{ cursos_trilha.first.curso.app }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                    {% endif %}
+                    <div>
+                        <h1 class="fw-bold mb-2">{{ trilha.titulo }}</h1>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <span class="badge bg-white text-dark">
+                                <i class="bi bi-book"></i> {{ trilha.total_cursos }} curso{{ trilha.total_cursos|pluralize }}
+                            </span>
+                            <span class="badge bg-white text-dark">
+                                <i class="bi bi-clock"></i> {{ trilha.carga_horaria_total }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <p class="lead mb-0">{{ trilha.descricao }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sequência de Cursos -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="fw-bold mb-4 text-center">
+            <i class="bi bi-signpost-split"></i> Sequência de Aprendizado
+        </h2>
+        <p class="text-center text-muted mb-5">Siga os cursos na ordem recomendada para melhor aproveitamento</p>
+        
+        {% if cursos_trilha %}
+            <div class="row justify-content-center">
+                <div class="col-12 col-lg-10">
+                    {% for trilha_curso in cursos_trilha %}
+                    <div class="position-relative mb-4">
+                        <!-- Timeline connector -->
+                        {% if not forloop.last %}
+                        <div class="d-none d-md-block position-absolute" style="left: 29px; top: 80px; width: 2px; height: calc(100% + 16px); background: linear-gradient(to bottom, {{ trilha.cor }} 0%, {{ trilha.cor }}80 100%); z-index: 0;"></div>
+                        {% endif %}
+                        
+                        <!-- Curso Card -->
+                        <div class="card shadow-sm" style="border: none; border-left: 4px solid {{ trilha.cor }}; transition: transform 0.3s ease, box-shadow 0.3s ease; position: relative; z-index: 1;">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <!-- Número da ordem -->
+                                    <div class="col-auto d-none d-md-block">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 60px; height: 60px; background-color: {{ trilha.cor }}; color: white; font-size: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                                            {{ trilha_curso.ordem }}
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Informações do curso -->
+                                    <div class="col">
+                                        <div class="d-flex align-items-start mb-2">
+                                            <span class="badge d-md-none me-2" style="background-color: {{ trilha.cor }};">{{ trilha_curso.ordem }}</span>
+                                            <div class="flex-grow-1">
+                                                <h5 class="card-title fw-bold mb-1">{{ trilha_curso.curso.titulo }}</h5>
+                                                <div class="d-flex gap-2 flex-wrap mb-2">
+                                                    <span class="badge bg-secondary" style="font-size: 11px;">
+                                                        <i class="bi bi-app"></i> {{ trilha_curso.curso.app }}
+                                                    </span>
+                                                    <span class="badge" style="background-color: {{ trilha_curso.curso.cor }}; font-size: 11px;">
+                                                        {{ trilha_curso.curso.versao }}
+                                                    </span>
+                                                    <span class="badge bg-dark" style="font-size: 11px;">
+                                                        {{ trilha_curso.curso.nivel }}
+                                                    </span>
+                                                    <span class="badge bg-info" style="font-size: 11px;">
+                                                        <i class="bi bi-clock"></i> {{ trilha_curso.curso.carga_horaria }}
+                                                    </span>
+                                                    {% if not trilha_curso.obrigatorio %}
+                                                    <span class="badge bg-warning text-dark" style="font-size: 11px;">
+                                                        <i class="bi bi-star"></i> Opcional
+                                                    </span>
+                                                    {% endif %}
+                                                </div>
+                                                {% if trilha_curso.curso.descricao_curta %}
+                                                <p class="text-muted small mb-0">{{ trilha_curso.curso.descricao_curta|truncatewords:20 }}</p>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Botão ver curso -->
+                                    <div class="col-12 col-md-auto mt-3 mt-md-0">
+                                        <a href="{% url 'curso_detalhe' trilha_curso.curso.id %}" class="btn btn-sm w-100" style="background-color: {{ trilha.cor }}; color: white;">
+                                            <i class="bi bi-eye"></i> Ver Detalhes
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- CTA Final -->
+            <div class="text-center mt-5 p-4" style="background-color: {{ trilha.cor }}10; border-radius: 8px; border: 2px solid {{ trilha.cor }}40;">
+                <h4 class="fw-bold mb-3">Pronto para começar sua jornada?</h4>
+                <p class="text-muted mb-4">Entre em contato para saber mais sobre matrículas e turmas disponíveis</p>
+                <a href="{% url 'contato' %}" class="btn btn-lg" style="background-color: {{ trilha.cor }}; color: white;">
+                    <i class="bi bi-envelope"></i> Fale Conosco
+                </a>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <p class="text-muted mt-3">Nenhum curso configurado nesta trilha.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .card:hover {
+        transform: translateX(8px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+    }
+</style>
+{% endblock %}

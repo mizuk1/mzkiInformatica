@@ -1,0 +1,212 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html data-bs-theme="auto" lang="pt-br">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+        <title>{% block title %}Escola{% endblock %}</title>
+        <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+        
+        <!-- DNS Prefetch para melhorar performance -->
+        <link rel="dns-prefetch" href="https://aws-0-sa-east-1.pooler.supabase.com">
+        <link rel="preconnect" href="https://aws-0-sa-east-1.pooler.supabase.com">
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+        
+        <!-- Preload de recursos críticos -->
+        <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+        <link rel="preload" as="image" href="{% static 'images/logo.png' %}">
+        
+        <!-- Bootstrap via CDN (mais rápido) -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'assets/css/styles.min.css' %}">
+        <link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
+        <link rel="stylesheet" href="{% static 'assets/css/common.css' %}">
+        <link rel="stylesheet" href="{% static 'assets/css/base.css' %}">
+        
+        <!-- Extra styles (for individual pages) -->
+        {% block extra_head %}{% endblock %}
+    </head>
+
+    <body class="d-flex flex-column">
+        <!-- Loading overlay -->
+        <div id="page-loader">
+            <div class="spinner"></div>
+        </div>
+        
+        <header>
+            <nav class="navbar navbar-expand-md bg-body py-3">
+                <div class="container">
+                    <a class="navbar-brand d-flex align-items-center"
+                        href="{% url 'home' %}">
+                        <img src="{% static 'images/logo.png' %}"
+                            class="navbar-logo" alt="MZKI Treinamento">
+                    </a>
+                    <div class="collapse navbar-collapse d-none d-md-flex" id="navcol-2">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item"><a class="nav-link {% if current_url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a></li>
+                            <li class="nav-item"><a class="nav-link {% if current_url_name == 'cursos' %}active{% endif %}" href="{% url 'cursos' %}">Cursos</a></li>
+                            <li class="nav-item"><a class="nav-link {% if current_url_name == 'trilhas' or current_url_name == 'trilha_detalhe' %}active{% endif %}" href="{% url 'trilhas' %}">Trilhas</a></li>
+                            <li class="nav-item"><a class="nav-link {% if current_url_name == 'clientes' or current_url_name == 'cliente_detalhe' %}active{% endif %}" href="{% url 'clientes' %}">Clientes</a></li>
+                            <li class="nav-item"><a class="nav-link {% if current_url_name == 'agenda' %}active{% endif %}" href="{% url 'agenda' %}">Agenda</a></li>
+                            {% comment %} Chatbot temporariamente desativado
+                            <li class="nav-item" style="display: none;"><a class="nav-link {% if current_url_name == 'chatbot' %}active{% endif %}" href="{% url 'chatbot:chatbot' %}">Chatbot</a></li>
+                            {% endcomment %}
+                            <li class="nav-item"><a class="nav-link {% if current_url_name == 'contato' %}active{% endif %}" href="{% url 'contato' %}">Contato</a></li>
+                        </ul>
+                    </div>
+                    <!-- Dropdown/Botão em telas pequenas -->
+                    <div class="d-md-none ms-auto"></div>
+                </div>
+            </nav>
+            <!-- Menu de Navegação - Apenas em telas pequenas (SM ou menores) -->
+            <nav class="d-md-none" style="background-color: #f8f9fa; border-bottom: 1px solid #e9ecef; padding: 8px 0;">
+                <div class="container">
+                    <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+                        <a href="{% url 'home' %}" style="text-decoration: none; color: {% if current_url_name == 'home' %}#0d6efd{% else %}#666{% endif %}; font-weight: {% if current_url_name == 'home' %}600{% else %}500{% endif %}; padding: 8px 0; border-bottom: {% if current_url_name == 'home' %}3px solid #0d6efd{% else %}3px solid transparent{% endif %};">
+                            🏠 Home
+                        </a>
+                        <a href="{% url 'cursos' %}" style="text-decoration: none; color: {% if current_url_name == 'cursos' %}#0d6efd{% else %}#666{% endif %}; font-weight: {% if current_url_name == 'cursos' %}600{% else %}500{% endif %}; padding: 8px 0; border-bottom: {% if current_url_name == 'cursos' %}3px solid #0d6efd{% else %}3px solid transparent{% endif %};">
+                            📚 Cursos
+                        </a>
+                        <a href="{% url 'trilhas' %}" style="text-decoration: none; color: {% if current_url_name == 'trilhas' or current_url_name == 'trilha_detalhe' %}#0d6efd{% else %}#666{% endif %}; font-weight: {% if current_url_name == 'trilhas' or current_url_name == 'trilha_detalhe' %}600{% else %}500{% endif %}; padding: 8px 0; border-bottom: {% if current_url_name == 'trilhas' or current_url_name == 'trilha_detalhe' %}3px solid #0d6efd{% else %}3px solid transparent{% endif %};">
+                            🎯 Trilhas
+                        </a>
+                        <a href="{% url 'clientes' %}" style="text-decoration: none; color: {% if current_url_name == 'clientes' or current_url_name == 'cliente_detalhe' %}#0d6efd{% else %}#666{% endif %}; font-weight: {% if current_url_name == 'clientes' or current_url_name == 'cliente_detalhe' %}600{% else %}500{% endif %}; padding: 8px 0; border-bottom: {% if current_url_name == 'clientes' or current_url_name == 'cliente_detalhe' %}3px solid #0d6efd{% else %}3px solid transparent{% endif %};">
+                            🏢 Clientes
+                        </a>
+                        <a href="{% url 'agenda' %}" style="text-decoration: none; color: {% if current_url_name == 'agenda' %}#0d6efd{% else %}#666{% endif %}; font-weight: {% if current_url_name == 'agenda' %}600{% else %}500{% endif %}; padding: 8px 0; border-bottom: {% if current_url_name == 'agenda' %}3px solid #0d6efd{% else %}3px solid transparent{% endif %};">
+                            📅 Agenda
+                        </a>
+                        {% comment %} Chatbot temporariamente desativado
+                        <a href="{% url 'chatbot:chatbot' %}" style="text-decoration: none; color: {% if current_url_name == 'chatbot' %}#0d6efd{% else %}#666{% endif %}; font-weight: {% if current_url_name == 'chatbot' %}600{% else %}500{% endif %}; padding: 8px 0; border-bottom: {% if current_url_name == 'chatbot' %}3px solid #0d6efd{% else %}3px solid transparent{% endif %}; display: none;">
+                            💬 Chatbot
+                        </a>
+                        {% endcomment %}
+                        <a href="{% url 'contato' %}" style="text-decoration: none; color: {% if current_url_name == 'contato' %}#0d6efd{% else %}#666{% endif %}; font-weight: {% if current_url_name == 'contato' %}600{% else %}500{% endif %}; padding: 8px 0; border-bottom: {% if current_url_name == 'contato' %}3px solid #0d6efd{% else %}3px solid transparent{% endif %};">
+                            📞 Contato
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+        {% block footer %}
+        <footer class="mt-auto text-body bg-body my-footer">
+            <div class="container py-4 py-lg-5">
+                <div class="row justify-content-center">
+                    <!-- Links Rápidos -->
+                    <div class="col-sm-4 col-md-3 text-center text-lg-start d-flex flex-column mb-3">
+                        <h3 class="fs-6 fw-bold text-body mb-3">Links Rápidos</h3>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="{% url 'home' %}" class="text-muted text-decoration-none">🏠 Home</a></li>
+                            <li class="mb-2"><a href="{% url 'cursos' %}" class="text-muted text-decoration-none">📚 Cursos</a></li>
+                            <li class="mb-2"><a href="{% url 'trilhas' %}" class="text-muted text-decoration-none">🎯 Trilhas</a></li>
+                            <li class="mb-2"><a href="{% url 'clientes' %}" class="text-muted text-decoration-none">🏢 Clientes</a></li>
+                            <li class="mb-2"><a href="{% url 'agenda' %}" class="text-muted text-decoration-none">📅 Agenda</a></li>
+                            {% comment %} Chatbot temporariamente desativado
+                            <li class="mb-2" style="display: none;"><a href="{% url 'chatbot:chatbot' %}" class="text-muted text-decoration-none">💬 Chatbot</a></li>
+                            {% endcomment %}
+                            <li class="mb-2"><a href="{% url 'contato' %}" class="text-muted text-decoration-none">📞 Contato</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Contato -->
+                    <div class="col-sm-4 col-md-3 text-center text-lg-start d-flex flex-column mb-3">
+                        <h3 class="fs-6 fw-bold text-body mb-3">Contato</h3>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <a href="tel:+554130926125" class="text-muted text-decoration-none">
+                                    📞 (41) 3092-6125
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="tel:+554130926039" class="text-muted text-decoration-none">
+                                    📞 (41) 3092-6039
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="mailto:cursos@mzkitreinamento.com.br" class="text-muted text-decoration-none">
+                                    ✉️ cursos@mzkitreinamento.com.br
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="https://wa.me/5541992471843" target="_blank" class="text-muted text-decoration-none">
+                                    💬 WhatsApp
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Principais Cursos -->
+                    <div class="col-sm-4 col-md-3 text-center text-lg-start d-flex flex-column mb-3">
+                        <h3 class="fs-6 fw-bold text-body mb-3">Principais Cursos</h3>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="{% url 'cursos' %}?app=Excel" class="text-muted text-decoration-none">Excel</a></li>
+                            <li class="mb-2"><a href="{% url 'cursos' %}?app=Power+BI" class="text-muted text-decoration-none">Power BI</a></li>
+                            <li class="mb-2"><a href="{% url 'cursos' %}?app=SQL" class="text-muted text-decoration-none">SQL</a></li>
+                            <li class="mb-2"><a href="{% url 'cursos' %}?app=Access" class="text-muted text-decoration-none">Access</a></li>
+                            <li class="mb-2"><a href="{% url 'cursos' %}" class="text-muted text-decoration-none">Ver todos →</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Logo e Endereço -->
+                    <div class="col-lg-3 text-center text-lg-start d-flex flex-column align-items-center order-first align-items-lg-start order-lg-last mb-3">
+                        <div class="fw-bold d-flex align-items-center mb-3">
+                            <a href="{% url 'home' %}">
+                                <img src="{% static 'images/logo.png' %}" class="navbar-logo" alt="MZKI Treinamento">
+                            </a>
+                        </div>
+                        <p class="text-muted small mb-1"><strong>MZKi Informática LTDA</strong></p>
+                        <p class="text-muted small mb-1">Av. Cândido de Abreu, 140 Cj 407</p>
+                        <p class="text-muted small mb-1">Centro Cívico – Curitiba/PR</p>
+                        <p class="text-muted small">CEP: 80530-000</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between align-items-center pt-3 flex-wrap">
+                    <p class="mb-0 text-muted small">© 2025 MZKi Treinamento. Todos os direitos reservados.</p>
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item">
+                            <a href="https://wa.me/5541992471843" target="_blank" title="WhatsApp" class="text-body">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-whatsapp">
+                                    <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="mailto:cursos@mzkitreinamento.com.br" title="Email" class="text-body">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-envelope">
+                                    <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+                                </svg>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="tel:+554130926125" title="Telefone" class="text-body">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" viewBox="0 0 16 16" class="bi bi-telephone">
+                                    <path d="M3.654 1.328a.678.678 0 0 0-1.015-.063L1.605 2.3c-.483.484-.661 1.169-.45 1.77a17.568 17.568 0 0 0 4.168 6.608 17.569 17.569 0 0 0 6.608 4.168c.601.211 1.286.033 1.77-.45l1.034-1.034a.678.678 0 0 0-.063-1.015l-2.307-1.794a.678.678 0 0 0-.58-.122l-2.19.547a1.745 1.745 0 0 1-1.657-.459L5.482 8.062a1.745 1.745 0 0 1-.46-1.657l.548-2.19a.678.678 0 0 0-.122-.58L3.654 1.328zM1.884.511a1.745 1.745 0 0 1 2.612.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </footer>
+        {% endblock %}
+        
+        <!-- Bootstrap JS via CDN com defer -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous" defer></script>
+        
+        <!-- Base template scripts -->
+        <script src="{% static 'assets/js/base.js' %}" defer></script>
+        
+        <!-- Instant.page para prefetch instantâneo de links -->
+        <script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module" integrity="sha384-jnZyxPjiipYXnSU0ygqeac2q7CVYMbh84q0uHVRRxEtvFPiQYbXWUorga2aqZJ0z" crossorigin="anonymous"></script>
+    </body>
+
+</html>

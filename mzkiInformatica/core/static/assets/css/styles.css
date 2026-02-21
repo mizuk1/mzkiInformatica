@@ -1,0 +1,35 @@
+.navbar-logo {
+  max-width: 100px;
+  width: 12vw;
+  min-width: 60px;
+  height: auto;
+}
+
+html {
+  overflow-y: scroll;
+}
+
+.hero-section {
+  min-height: 70vh;
+  background-image: url("/static/images/hero.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-section {
+  position: relative;
+  min-height: 70vh;
+  background-image: url("/static/images/hero.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.my-footer {
+  background-color: #faf8fa !important;
+}

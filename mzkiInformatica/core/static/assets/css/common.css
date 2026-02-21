@@ -1,0 +1,127 @@
+/* Common styles used across templates */
+
+/* Breadcrumb styling */
+.breadcrumb-nav {
+    background-color: #f8f9fa;
+    padding: 12px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.breadcrumb-item a {
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb-item a:hover {
+    color: #1A5E34;
+}
+
+.breadcrumb-item.active {
+    color: #333;
+}
+
+/* Common section backgrounds */
+.section-light-bg {
+    background-color: #f8f9fa;
+}
+
+.section-lighter-bg {
+    background-color: #f0f0f0;
+}
+
+/* Info cards */
+.info-card {
+    background-color: white;
+    border-left: 5px solid #1A5E34;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    transition: box-shadow 0.3s ease;
+}
+
+.info-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.info-card-label {
+    font-size: 11px;
+    color: #6c757d;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.info-card-value {
+    margin-bottom: 0;
+    font-weight: bold;
+}
+
+/* Hero section with background */
+.hero-light-section {
+    background-color: #f8f9fa;
+    padding: 40px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Logo container */
+.logo-container {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.logo-container img {
+    max-height: 200px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+/* Button styles */
+.btn-primary-custom {
+    background-color: #1A5E34;
+    color: white;
+    font-weight: 500;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary-custom:hover {
+    background-color: #0F4A26;
+    color: white;
+    text-decoration: none;
+}
+
+/* Empty state styling */
+.empty-state-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #ddd;
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 48px;
+    margin-bottom: 1rem;
+}
+
+/* Smooth transitions */
+.fade-transition {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fade-out {
+    opacity: 0;
+}
+
+.fade-in {
+    opacity: 1;
+}

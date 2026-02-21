@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ cliente.nome }} - Portal de Acesso{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" style="background-color: #f8f9fa; padding: 12px 0; border-bottom: 1px solid #e9ecef;">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}" style="color: #666; text-decoration: none;">🏠 Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'clientes' %}" style="color: #666; text-decoration: none;">🏢 Clientes</a></li>
+      <li class="breadcrumb-item active" aria-current="page" style="color: #333;">{{ cliente.nome }}</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Section com Logo -->
+<div style="background-color: #f8f9fa; padding: 40px 0; border-bottom: 1px solid #e9ecef;">
+  <div class="container">
+    <div class="row align-items-center">
+      <!-- Logo -->
+      <div class="col-md-3 text-center mb-4 mb-md-0">
+        <div class="card border shadow-sm" style="background-color: white; border-color: #e0e0e0 !important; padding: 20px;">
+          {% if cliente.logo %}
+            <img src="{{ cliente.logo.url }}" 
+                 alt="{{ cliente.nome }}" 
+                 class="img-fluid" 
+                 style="max-height: 200px; max-width: 100%; object-fit: contain;">
+          {% else %}
+            <div style="font-size: 80px; color: #1A5E34;">🏢</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Informações -->
+      <div class="col-md-9">
+        <h1 class="fw-bold mb-3">{{ cliente.nome }}</h1>
+        
+        {% if cliente.descricao %}
+        <p class="fs-5 text-muted mb-4">{{ cliente.descricao }}</p>
+        {% endif %}
+
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <div class="card border-0" style="background-color: white; border-left: 5px solid #1A5E34; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div class="card-body">
+                <small class="text-muted d-block" style="font-size: 11px;">CATEGORIA</small>
+                <p class="mb-0 fw-bold">{{ cliente.get_categoria_display_pt }}</p>
+              </div>
+            </div>
+          </div>
+
+          {% if cliente.site %}
+          <div class="col-sm-6">
+            <a href="{{ cliente.site }}" target="_blank" class="card border-0 text-decoration-none" 
+               style="background-color: white; border-left: 5px solid #1A5E34; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+              <div class="card-body">
+                <small class="text-muted d-block" style="font-size: 11px;">WEBSITE</small>
+                <p class="mb-0 fw-bold" style="color: #1A5E34; font-size: 14px;">Visitar site →</p>
+              </div>
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Seção de VODs -->
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <h2 class="h3 fw-bold mb-4" style="color: #1A5E34;">📹 Vídeos Disponíveis</h2>
+
+      <div class="alert alert-info mb-4" role="alert">
+        <strong>📌 Portal em desenvolvimento</strong><br>
+        Em breve você poderá acessar os VODs dos cursos que sua empresa participou através desta página.
+        Os vídeos estarão armazenados de forma segura e acessível apenas para usuários autenticados de sua empresa.
+      </div>
+
+      <!-- Espaço para VODs futuros -->
+      <div class="row g-4" id="vodsContainer">
+        <div class="col-12 text-center py-5" style="background-color: #f8f9fa; border-radius: 8px; border: 2px dashed #ddd;">
+          <div style="font-size: 48px; margin-bottom: 16px;">🎬</div>
+          <p class="text-muted mb-2">Nenhum vídeo disponível no momento</p>
+          <p class="small text-muted">Aguarde a integração com o Google Drive</p>
+        </div>
+      </div>
+
+      <!-- Instruções para acesso futuro -->
+      <div class="mt-5 p-4" style="background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid #1A5E34;">
+        <h5 class="fw-bold mb-3">ℹ️ Como funcionará</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2">
+            <strong>1. Autenticação segura</strong><br>
+            <span class="text-muted small">Apenas usuários autenticados terão acesso aos VODs</span>
+          </li>
+          <li class="mb-2">
+            <strong>2. VODs organizados por curso</strong><br>
+            <span class="text-muted small">Cada curso aparecerá com todos os vídeos de suas aulas</span>
+          </li>
+          <li class="mb-2">
+            <strong>3. Acesso permanente</strong><br>
+            <span class="text-muted small">Você poderá rever os vídeos sempre que precisar</span>
+          </li>
+          <li>
+            <strong>4. Integração com Google Drive</strong><br>
+            <span class="text-muted small">Os vídeos serão entregues diretamente do nosso Google Drive</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Botão de contato -->
+      <div class="mt-5 text-center">
+        <a href="{% url 'contato' %}" class="btn" style="background-color: #1A5E34; color: white; font-weight: 500; padding: 12px 32px;">
+          Tem dúvidas? Entre em contato
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .vod-card {
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
+  .vod-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12) !important;
+  }
+</style>
+
+{% endblock %}

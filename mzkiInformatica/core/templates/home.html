@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% load static %}
+{% load cache %}
+
+{% block title %}MZKi{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'assets/css/home.css' %}?v=20260207">
+{% endblock %}
+
+{% block content %}
+<section class="hero-section text-dark d-flex align-items-center">
+  <!-- overlay -->
+  <div class="hero-overlay"></div>
+
+  <!-- conteúdo -->
+  <div class="container h-100 position-relative">
+    <div class="row h-100">
+      <div
+        class="col-md-10 col-xl-8 text-center d-flex d-sm-flex d-md-flex justify-content-center align-items-center justify-content-md-start align-items-md-center justify-content-xl-center mx-auto">
+        <div>
+          <h1 class="display-5 fw-bold text-uppercase mb-3">MZKI Treinamento</h1>
+          <h2 class="fs-3 fw-semibold mb-3">
+            Aprenda Excel e Power BI de forma prática e conquiste a habilidade mais valorizada pelas empresas: analisar dados e tomar decisões que impulsionam sua carreira
+          </h2>
+          <p class="lead mb-4">
+            Cursos práticos focados em aplicação real, do básico ao avançado, para acelerar sua carreira.
+          </p>
+          <form
+            class="d-flex flex-column flex-sm-row gap-2 justify-content-center justify-content-md-start mb-3 p-3 rounded"
+            action="{% url 'recommend_page' %}"
+            method="get"
+            style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); border: 2px solid #0d6efd; box-shadow: 0 6px 16px rgba(13, 110, 253, 0.2);"
+          >
+            <input
+              type="text"
+              name="q"
+              class="form-control form-control-lg"
+              placeholder="O que você quer aprender? (ex: Excel, Power BI, bancos de dados)"
+              required
+              style="border: 2px solid #dee2e6; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);"
+            />
+            <button type="submit" class="btn btn-primary btn-lg px-4" style="box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3); white-space: nowrap;">
+              🔍 Buscar curso
+            </button>
+          </form>
+          <a href="{% url 'cursos' %}" class="btn btn-primary btn-lg px-4 py-2">
+            Ver cursos
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if apps %}
+{% cache 3600 home_apps_section_v4 %}
+<section class="home-section">
+  <div class="container">
+    <h3 class="text-center mb-5 fw-bold">Nossos Aplicativos</h3>
+    <div class="row g-4 justify-content-center">
+      {% for app in apps %}
+      <div class="col-6 col-md-4 col-lg-4">
+        <a href="{% url 'cursos' %}?app={{ app.app }}" class="text-decoration-none">
+          <div class="card h-100 border-0 overflow-hidden home-apps-card">
+            <!-- Barra colorida do app -->
+            <div class="app-bar-gradient" style="--app-color: {{ app.cor }}; --app-color-cc: {{ app.cor }}cc;"></div>
+            <div class="card-body p-4 d-flex flex-column align-items-center text-center">
+              <div class="mb-3" style="width: 100px; height: 100px; display: flex; align-items: center; justify-content: center;">
+                <img src="{% static 'images/apps/' %}{{ app.app|lower }}.png" alt="{{ app.app }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              </div>
+              <h5 class="card-title fw-bold mb-2" style="color: {{ app.cor }};">{{ app.app }}</h5>
+              <p class="text-muted mb-0">
+                <span class="badge rounded-pill px-3 py-2" style="background-color: {{ app.cor }}; color: white; font-size: 0.85rem;"><i class="fas fa-book me-1"></i>{{ app.total_cursos }} curso{{ app.total_cursos|pluralize }}</span>
+              </p>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{% url 'cursos' %}" class="btn btn-outline-primary">
+        Ver todos os aplicativos <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+{% endcache %}
+
+{% endif %}
+
+{% if cursos %}
+{% cache 3600 home_cursos_section_v2 %}
+<section class="home-section home-cursos-section">
+  <div class="container">
+    <h3 class="text-center mb-5 fw-bold">Confira nossos cursos</h3>
+    <div class="row g-4 justify-content-center">
+      {% for curso in cursos %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm overflow-hidden">
+          <!-- Barra colorida do app -->
+          <div style="height: 5px; background-color: {{ curso.cor }};"></div>
+          <div class="card-body p-4 d-flex flex-column">
+            <span class="badge text-white mb-3 align-self-start" style="background-color: {{ curso.cor }};">{{ curso.app }}</span>
+            <h5 class="card-title fw-bold mb-2">{{ curso.titulo }}</h5>
+            <p class="text-muted small mb-3">{{ curso.nivel }} • {{ curso.versao }}</p>
+            <p class="card-text text-muted small flex-grow-1 lh-sm">{{ curso.descricao_curta|truncatewords:20 }}</p>
+            <a href="{% url 'curso_detalhe' curso.id %}" class="btn btn-sm mt-3" style="background-color: {{ curso.cor }}; color: white; border: none;">
+              Saiba mais →
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{% url 'cursos' %}" class="btn btn-outline-primary">
+        Ver todos os cursos <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+{% endcache %}
+{% endif %}
+
+{% if trilhas %}
+{% cache 3600 home_trilhas_section %}
+<section class="home-section">
+  <div class="container">
+    <h3 class="text-center mb-5 fw-bold">Trilhas de Aprendizado</h3>
+    <div class="row g-4 justify-content-center">
+      {% for trilha in trilhas %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm overflow-hidden">
+          <!-- Barra colorida da trilha -->
+          <div style="height: 5px; background-color: {{ trilha.cor }};"></div>
+          <div class="card-body p-4 d-flex flex-column">
+            <div class="d-flex align-items-center mb-3">
+              {% if trilha.cursos.first %}
+              <div class="me-2" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <img src="{% static 'images/apps/' %}{{ trilha.cursos.first.curso.app|lower }}.png" alt="{{ trilha.cursos.first.curso.app }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+              </div>
+              {% endif %}
+              <span class="badge text-white" style="background-color: {{ trilha.cor }}; font-size: 11px;">
+                <i class="bi bi-book"></i> {{ trilha.total_cursos }} curso{{ trilha.total_cursos|pluralize }}
+              </span>
+            </div>
+            <h5 class="card-title fw-bold mb-2">{{ trilha.titulo }}</h5>
+            <p class="text-muted small mb-2"><i class="bi bi-clock"></i> {{ trilha.carga_horaria_total }}</p>
+            <p class="card-text text-muted small flex-grow-1 lh-sm">{{ trilha.descricao|truncatewords:20 }}</p>
+            <a href="{% url 'trilha_detalhe' trilha.id %}" class="btn btn-sm mt-3" style="background-color: {{ trilha.cor }}; color: white; border: none;">
+              Ver trilha →
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+      <a href="{% url 'trilhas' %}" class="btn btn-outline-primary">
+        Ver todas as trilhas <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+</section>
+{% endcache %}
+{% endif %}
+
+{% endblock %}

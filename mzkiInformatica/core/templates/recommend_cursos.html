@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Recomendador de Cursos IA - Escola{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" style="background-color: #f8f9fa; padding: 12px 0; border-bottom: 1px solid #e9ecef;">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}" style="color: #666; text-decoration: none;">🏠 Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page" style="color: #333;">🤖 Recomendador de Cursos</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="d-flex align-items-center justify-content-center text-white" style="background: linear-gradient(135deg, #1A5E34 0%, #0F4A26 100%); min-height: 180px; padding: 40px 0;">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-3"><i class="bi bi-robot"></i> Recomendador de Cursos com IA</h1>
+        <p class="fs-5 mb-0">Descreva o que você quer aprender e encontre o melhor caminho para seu desenvolvimento</p>
+    </div>
+</section>
+
+<!-- Content -->
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+
+            <!-- Search Form -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <form id="searchForm">
+                        <div class="mb-3">
+                            <label for="userMessage" class="form-label fw-bold">
+                                O que você gostaria de aprender?
+                            </label>
+                            <textarea 
+                                class="form-control" 
+                                id="userMessage" 
+                                rows="4"
+                                placeholder="Exemplo: Preciso criar dashboards profissionais e automatizar relatórios no Excel..."
+                                required
+                            ></textarea>
+                            <div class="form-text">
+                                Seja específico sobre suas necessidades. A IA analisará sua mensagem e encontrará os cursos mais relevantes.
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100" id="searchBtn">
+                            <span id="searchBtnText">🔍 Buscar Cursos</span>
+                            <span id="searchBtnLoading" style="display: none;">
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                Analisando...
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div id="loadingSection" class="text-center" style="display: none;">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="text-muted">Nossa IA está analisando sua necessidade e buscando os melhores cursos...</p>
+            </div>
+
+            <!-- Results -->
+            <div id="resultsSection" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 id="resultsTitle" class="mb-0"></h3>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="newSearch()">
+                        Nova Busca
+                    </button>
+                </div>
+                <div id="resultsContainer"></div>
+            </div>
+
+            <!-- Error -->
+            <div id="errorSection" class="alert alert-danger" style="display: none;" role="alert">
+                <h5 class="alert-heading">❌ Erro</h5>
+                <p id="errorMessage" class="mb-0"></p>
+            </div>
+
+            <!-- Examples -->
+            <div class="card bg-light mt-5">
+                <div class="card-body">
+                    <h5 class="card-title">💡 Exemplos de buscas:</h5>
+                    <ul class="mb-0">
+                        <li><a href="#" onclick="fillExample('Quero aprender Excel do básico ao avançado'); return false;">Quero aprender Excel do básico ao avançado</a></li>
+                        <li><a href="#" onclick="fillExample('Preciso criar dashboards profissionais e gráficos interativos'); return false;">Preciso criar dashboards profissionais e gráficos interativos</a></li>
+                        <li><a href="#" onclick="fillExample('Como fazer apresentações impactantes para reuniões corporativas?'); return false;">Como fazer apresentações impactantes para reuniões corporativas?</a></li>
+                        <li><a href="#" onclick="fillExample('Quero automatizar tarefas repetitivas no trabalho'); return false;">Quero automatizar tarefas repetitivas no trabalho</a></li>
+                        <li><a href="#" onclick="fillExample('Preciso gerenciar projetos complexos com múltiplas equipes'); return false;">Preciso gerenciar projetos complexos com múltiplas equipes</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.curso-card {
+    border-left: 4px solid;
+    transition: all 0.3s ease;
+}
+.curso-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.similarity-badge {
+    font-size: 0.85rem;
+}
+.comentario-ia {
+    background-color: #1F3EC5;
+    color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+.comentario-ia strong {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.comentario-ia p {
+    margin-bottom: 0;
+}
+.curso-info-badge {
+    font-size: 0.8rem;
+}
+</style>
+
+<script>
+document.getElementById('searchForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    await buscarCursos();
+});
+
+function fillExample(text) {
+    document.getElementById('userMessage').value = text;
+    document.getElementById('userMessage').focus();
+}
+
+function newSearch() {
+    document.getElementById('userMessage').value = '';
+    document.getElementById('resultsSection').style.display = 'none';
+    document.getElementById('errorSection').style.display = 'none';
+    document.getElementById('userMessage').focus();
+}
+
+async function buscarCursos() {
+    const message = document.getElementById('userMessage').value.trim();
+    
+    if (!message) {
+        alert('Por favor, descreva o que você precisa aprender');
+        return;
+    }
+    
+    // Reset UI
+    document.getElementById('resultsSection').style.display = 'none';
+    document.getElementById('errorSection').style.display = 'none';
+    document.getElementById('loadingSection').style.display = 'block';
+    document.getElementById('searchBtnText').style.display = 'none';
+    document.getElementById('searchBtnLoading').style.display = 'inline';
+    document.getElementById('searchBtn').disabled = true;
+    
+    try {
+        const response = await fetch('/api/recommend-courses/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayResults(data.results, data.total_found);
+        } else {
+            displayError(data.error || 'Erro desconhecido');
+        }
+    } catch (error) {
+        displayError('Erro ao buscar cursos: ' + error.message);
+    } finally {
+        document.getElementById('loadingSection').style.display = 'none';
+        document.getElementById('searchBtnText').style.display = 'inline';
+        document.getElementById('searchBtnLoading').style.display = 'none';
+        document.getElementById('searchBtn').disabled = false;
+    }
+}
+
+// Auto-preencher e buscar quando vier da home com ?q=
+const params = new URLSearchParams(window.location.search);
+const initialQuery = params.get('q');
+if (initialQuery) {
+    document.getElementById('userMessage').value = initialQuery;
+    buscarCursos();
+}
+
+function displayResults(cursos, total) {
+    const resultsSection = document.getElementById('resultsSection');
+    const resultsTitle = document.getElementById('resultsTitle');
+    const resultsContainer = document.getElementById('resultsContainer');
+    
+    if (cursos.length === 0) {
+        resultsTitle.textContent = 'Nenhum curso encontrado';
+        resultsContainer.innerHTML = '<p class="text-muted">Tente reformular sua busca ou usar termos diferentes.</p>';
+        resultsSection.style.display = 'block';
+        return;
+    }
+    
+    resultsTitle.textContent = `Encontramos ${total} curso${total > 1 ? 's' : ''} para você`;
+    
+    // Ordenar cursos por similaridade (decrescente - maior primeiro)
+    cursos.sort((a, b) => (b.similarity_score || 0) - (a.similarity_score || 0));
+    
+    let html = '';
+    cursos.forEach((curso, index) => {
+        const similarityPercent = (curso.similarity_score * 100).toFixed(0);
+        const badgeColor = similarityPercent >= 80 ? 'success' : similarityPercent >= 60 ? 'primary' : 'info';
+        
+        html += `
+        <div class="card curso-card mb-3" style="border-left-color: ${curso.cor || '#6c757d'}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">${curso.titulo}</h5>
+                    <span class="badge bg-${badgeColor} similarity-badge">
+                        ${similarityPercent}% relevante
+                    </span>
+                </div>
+                
+                <div class="mb-3">
+                    <span class="badge bg-secondary curso-info-badge me-2">${curso.app}</span>
+                    <span class="badge bg-info curso-info-badge me-2">${curso.nivel}</span>
+                    <span class="badge bg-dark curso-info-badge me-2">v${curso.versao}</span>
+                    <span class="badge bg-warning text-dark curso-info-badge">${curso.carga_horaria}</span>
+                </div>
+                
+                <p class="text-muted mb-3">${curso.descricao_curta}</p>
+                
+                ${curso.modalidades && curso.modalidades.length > 0 ? `
+                <div class="mb-3">
+                    <small class="text-muted">
+                        <strong>Modalidades:</strong> ${curso.modalidades.join(', ')}
+                    </small>
+                </div>
+                ` : ''}
+                
+                <div class="comentario-ia p-3 mb-3">
+                    <strong class="d-block mb-2">💡 Por que este curso é ideal para você:</strong>
+                    <p class="mb-0">${curso.comentario_ia}</p>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <a href="/cursos/${curso.curso_id}/" class="btn btn-primary">
+                        Ver Detalhes →
+                    </a>
+                    <a href="https://wa.me/5541992471843?text=Olá!%20Gostaria%20de%20saber%20mais%20informações%20sobre%20o%20curso%20${encodeURIComponent(curso.titulo)}.%20Fiquei%20interessado%20pelas%20recomendações%20do%20sistema%20de%20IA!" target="_blank" class="btn btn-outline-success">
+                        <i class="fab fa-whatsapp"></i> Solicitar Informações
+                    </a>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+    
+    resultsContainer.innerHTML = html;
+    resultsSection.style.display = 'block';
+    
+    // Scroll to results
+    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function displayError(errorMsg) {
+    const errorSection = document.getElementById('errorSection');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    errorMessage.textContent = errorMsg;
+    errorSection.style.display = 'block';
+    
+    // Scroll to error
+    errorSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+{% endblock %}

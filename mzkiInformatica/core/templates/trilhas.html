@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Trilhas de Aprendizado{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" style="background-color: #f8f9fa; padding: 12px 0; border-bottom: 1px solid #e9ecef;">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}" style="color: #666; text-decoration: none;">🏠 Home</a></li>
+      <li class="breadcrumb-item active" aria-current="page" style="color: #333;">🎯 Trilhas de Aprendizado</li>
+    </ol>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="d-flex align-items-center justify-content-center text-white" style="background: linear-gradient(135deg, #1A5E34 0%, #0F4A26 100%); min-height: 180px; padding: 40px 0;">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold mb-3"><i class="bi bi-signpost-2"></i> Trilhas de Aprendizado</h1>
+        <p class="fs-5 mb-0">Siga um caminho estruturado de cursos para alcançar seus objetivos profissionais</p>
+    </div>
+</section>
+
+<!-- Trilhas -->
+<section class="py-5">
+    <div class="container">
+        {% if trilhas %}
+            <div class="row g-4">
+                {% for trilha in trilhas %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm d-flex flex-column" style="border: none; border-top: 4px solid {{ trilha.cor }}; transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="flex-shrink-0 me-3">
+                                    {% if trilha.cursos.first %}
+                                    <div class="d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <img src="{% static 'images/apps/' %}{{ trilha.cursos.first.curso.app|lower }}.png" alt="{{ trilha.cursos.first.curso.app }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title fw-bold mb-2">{{ trilha.titulo }}</h5>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <span class="badge" style="background-color: {{ trilha.cor }}; font-size: 11px;">
+                                            <i class="bi bi-book"></i> {{ trilha.total_cursos }} curso{{ trilha.total_cursos|pluralize }}
+                                        </span>
+                                        <span class="badge bg-secondary" style="font-size: 11px;">
+                                            <i class="bi bi-clock"></i> {{ trilha.carga_horaria_total }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <p class="card-text text-muted small mb-3" style="min-height: 60px;">{{ trilha.descricao|truncatewords:20 }}</p>
+                            
+                            <!-- Preview dos cursos -->
+                            <div class="mb-3 flex-grow-1">
+                                <small class="text-muted fw-bold d-block mb-2">Cursos incluídos:</small>
+                                <ol class="ps-3 mb-0 small" style="max-height: 120px; overflow: hidden;">
+                                    {% for trilha_curso in trilha.cursos.all|slice:":3" %}
+                                    <li class="text-muted mb-1">
+                                        {{ trilha_curso.curso.titulo|truncatewords:5 }}
+                                    </li>
+                                    {% endfor %}
+                                    {% if trilha.total_cursos > 3 %}
+                                    <li class="text-muted fst-italic">E mais {{ trilha.total_cursos|add:"-3" }} curso{{ trilha.total_cursos|add:"-3"|pluralize }}...</li>
+                                    {% endif %}
+                                </ol>
+                            </div>
+                            
+                            <a href="{% url 'trilha_detalhe' trilha.id %}" class="btn w-100 mt-auto" style="background-color: {{ trilha.cor }}; color: white;">
+                                <i class="bi bi-arrow-right-circle"></i> Ver Trilha Completa
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <p class="text-muted mt-3">Nenhuma trilha disponível no momento.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    }
+</style>
+{% endblock %}
