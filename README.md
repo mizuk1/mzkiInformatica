@@ -1,6 +1,6 @@
 # 🚀 MZKI Informatica
 
-A complete web platform for technology education and digital inclusion.
+A complete [web platform](https://mzki.com.br) for technology education and digital inclusion.
 
 ## 📋 About the Project
 
