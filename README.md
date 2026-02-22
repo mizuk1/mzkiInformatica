@@ -1,18 +1,20 @@
-# mzkiInformatica
+# 🎓 mzkiInformatica
 
-Site institucional da MZKI com catálogo de cursos, trilhas, agenda, clientes e recomendação de cursos com IA.
+Site institucional da MZKI com catálogo de cursos, trilhas, agenda, clientes e recomendação inteligente de cursos com IA.
 
 [Site da MZKI Treinamento](https://mzki.com.br)
 
-## Stack
+## 📦 Tecnologias
 
-- Python 3.12 + Django 6
-- Docker + Docker Compose
-- Nginx (reverse proxy)
-- PostgreSQL (container)
-- Integração OpenAI/LangChain (recomendação de cursos)
+- **Python 3.12** + **Django 6.0.2**
+- **Docker** + **Docker Compose** (web, db, nginx)
+- **Nginx** (reverse proxy com SSL/HTTPS)
+- **PostgreSQL 16** (em container com volume persistente)
+- **OpenAI** + **LangChain** (recomendação inteligente de cursos)
+- **WhiteNoise** (serve static files comprimido)
+- **Gunicorn** (app server com workers)
 
-## Estrutura
+## 📂 Estrutura
 
 - `mzkiInformatica/` → projeto Django (`manage.py`, app `core`)
 - `docker-compose.yml` → serviços `web`, `db`, `nginx`
@@ -179,12 +181,103 @@ docker compose up -d --force-recreate nginx
 docker logs --tail=100 mzki-nginx
 ```
 
+## ✨ Features
+
+- 🎯 **Catálogo de Cursos** - Browse, filtros por tema, detalhes técnicos completos
+- 📚 **Trilhas de Aprendizagem** - Sequência recomendada de cursos estruturados
+- 🤖 **Recomendação Inteligente** - IA (OpenAI + LangChain) sugere cursos baseado no perfil
+- 📅 **Agenda de Turmas** - Próximas datas, horários, instrutores
+- 👥 **Portfólio de Clientes** - Logos, histórico de parcerias, testimoniais
+- 🔐 **HTTPS/SSL** - Certificado Let's Encrypt válido para 3 domínios
+- 🚀 **Deploy Docker** - Stack containerizado, pronto para VPS, 1 comando
+- ⚡ **Otimizações** - WhiteNoise comprimido, Gunicorn workers, cache de templates
+
+## 💡 O que Aprendi
+
+🐳 **Docker Otimizações**
+- PyTorch CPU-only economiza ~2GB na imagem final (vs CUDA wheels)
+- Staged pip installs reduzem layers e tamanho
+- `PIP_NO_CACHE_DIR` diminui imagem em ~500MB
+
+🔒 **Django + SSL**
+- `APP_DIRS=False` obrigatório quando usando custom `loaders` em `TEMPLATES`
+- `CSRF_TRUSTED_ORIGINS` crítico para HTTPS; incluir todos os domínios
+- `SESSION_COOKIE_SECURE=True` força cookies HTTPS-only em produção
+
+📝 **Nginx Configuration**
+- Duplicação de `location` blocks causa startup failure imediato
+- Sempre validar com `docker logs mzki-nginx` após mudanças
+- `proxy_pass` requer URL com protocolo (http://web:8000, não web:8000)
+
+💾 **VPS Constraints**
+- Disco < 10GB não consegue buildar imagens ML
+- `POSTGRES_HOST_AUTH_METHOD=trust` OK para dev, md5/scram para produção
+- Volume Docker persistente melhor que backups manuais
+
+⚡ **Deployment**
+- `docker compose up -d --no-build` reutiliza imagem
+- Migrations rodam no `entrypoint.sh`, não precisa manual
+- `--force-recreate` força recriação mesmo se image existir
+
+## 🎯 Melhorias Futuras
+
+- [ ] **Email SMTP** - SendGrid ou AWS SES para notificações reais
+- [ ] **Dark Mode** - CSS variables + toggle localStorage
+- [ ] **Rich Text Editor** - TinyMCE para descrições com formatting
+- [ ] **Advanced Search** - Elasticsearch para full-text search
+- [ ] **Analytics** - Google Analytics / Plausible para tracking
+- [ ] **Multi-idioma** - Suporte EN + ES além de PT-BR
+- [ ] **Payment Gateway** - Stripe / PagSeguro para venda de cursos
+- [ ] **Redis Caching** - Cache distribuído para sessions
+- [ ] **Error Tracking** - Sentry para monitoramento em produção
+- [ ] **CI/CD** - GitHub Actions para tests e deploy automático
+
+## 📊 Arquitetura de Deploy
+
+```
+┌──────────────────────────────────────┐
+│     Internet (HTTPS 443)             │
+└────────────────┬─────────────────────┘
+                 │
+        ┌────────▼────────┐
+        │   Nginx:443     │
+        │   SSL + TLS 1.3 │
+        └────────┬────────┘
+                 │
+        ┌────────▼────────┐
+        │  Gunicorn:8000  │
+        │  (Django app)   │
+        │  2 workers      │
+        └────────┬────────┘
+                 │
+        ┌────────▼────────┐
+        │ PostgreSQL:5432 │
+        │ (DB volume)     │
+        └─────────────────┘
+```
+
+## 🤝 Contribuindo
+
+1. Fork do repositório
+2. Feature branch: `git checkout -b feature/sua-feature`
+3. Commit: `git commit -am 'Add feature'`
+4. Push: `git push origin feature/sua-feature`
+5. Pull Request
+
 ## Segurança
 
 - Nunca versione `.env` com chaves reais.
-- Rotacione periodicamente `OPENAI_API_KEY` e `LANGCHAIN_API_KEY`.
+- Rotacione `OPENAI_API_KEY` e `LANGCHAIN_API_KEY` periodicamente.
 - Em produção: `DEBUG=False`.
 
 ## Licença
+
+Consulte `LICENSE`.
+
+---
+
+**Última atualização:** Fevereiro 2025  
+**Stack:** Django 6.0.2 | Python 3.12 | PostgreSQL 16 | Docker | Nginx  
+**Deploy:** Automatizado com `install.sh` para VPS Ubuntu 22.04+
 
 Consulte `LICENSE`.
