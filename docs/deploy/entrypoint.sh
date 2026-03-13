@@ -15,4 +15,11 @@ python manage.py migrate --noinput || echo "⚠️  Migrations failed"
 
 # Run gunicorn
 echo "✅ Starting Gunicorn..."
-gunicorn mzkiInformatica.wsgi:application --bind 0.0.0.0:8000 --workers 2 --threads 2 --timeout 120
+gunicorn mzkiInformatica.wsgi:application \
+	--bind 0.0.0.0:8000 \
+	--workers 2 \
+	--threads 2 \
+	--timeout 300 \
+	--graceful-timeout 30 \
+	--max-requests 500 \
+	--max-requests-jitter 50
