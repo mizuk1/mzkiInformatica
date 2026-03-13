@@ -11,7 +11,7 @@ services:
       - static_volume:/app/mzkiInformatica/staticfiles
       - logs_volume:/app/logs
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -31,7 +31,7 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     networks:
       - mzki_network
     restart: unless-stopped
