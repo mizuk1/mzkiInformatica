@@ -31,6 +31,8 @@ services:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
+      # ⚠️ SECURITY: Changed from 0.0.0.0:5432 to 127.0.0.1:5432
+      # Database is now only accessible from localhost/internal network
       - "127.0.0.1:5432:5432"
     networks:
       - mzki_network
