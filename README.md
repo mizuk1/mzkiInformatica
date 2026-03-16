@@ -37,6 +37,9 @@ The project includes:
 - HTTPS with Let’s Encrypt certificates
 - PostgreSQL as the production database
 - Static and media files served by Nginx
+- PostgreSQL exposed only to localhost/internal Docker network (`127.0.0.1:5432`)
+- Nginx rate limiting enabled for DDoS mitigation
+- UFW firewall policy for production VPS hardening
 
 ## 🏗️ Project Architecture
 
@@ -143,6 +146,45 @@ docker compose build --no-cache web && docker compose up -d
 docker compose exec web bash
 ```
 
+### Security hardening (production)
+
+```bash
+# Keep database private (localhost only)
+ss -tulpen | grep 5432
+
+# Firewall baseline
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow 22/tcp
+sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw deny 5432/tcp
+sudo ufw deny 6379/tcp
+sudo ufw status verbose
+
+# Optional: fail2ban
+sudo systemctl status fail2ban
+```
+
+### Backup policy (MZKI database)
+
+MZKI stores important business data and must have recurring backups.
+
+```bash
+# Manual backup
+docker compose exec -T db pg_dump -U postgres mzki_db | gzip > backups/mzki_db_$(date +%F_%H%M).sql.gz
+
+# Example daily backup (02:00)
+crontab -e
+# 0 2 * * * /home/thiag/projects/poe2-mybot/scripts/backup_mzki_db.sh >> /var/log/mzki_backup.log 2>&1
+```
+
+Restore example:
+
+```bash
+gunzip -c backups/mzki_db_YYYY-MM-DD_HHMM.sql.gz | docker compose exec -T db psql -U postgres -d mzki_db
+```
+
 ## 🔒 Security Notes
 
 - Keep `.env` out of version control
@@ -150,6 +192,10 @@ docker compose exec web bash
 - Use strong values for `SECRET_KEY`
 - Restrict `ALLOWED_HOSTS` to real domains
 - Force HTTPS in production
+- Never expose PostgreSQL (`5432`) publicly
+- Keep app traffic behind Nginx (`80/443`) with rate limiting
+- Use `fail2ban` on VPS to reduce brute-force and abusive traffic
+- Validate open ports after deploy (`nmap` from external host)
 
 ## 🧪 Testing
 
